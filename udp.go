@@ -18,12 +18,12 @@ const (
 var Logger = log.New(os.Stderr, "", log.LstdFlags)
 
 type unsafeWriter struct {
-	data []byte
+	data [1][]byte
 	enc  *gojay.Encoder
 }
 
 func (w *unsafeWriter) Write(data []byte) (int, error) {
-	w.data = data
+	w.data[0] = data
 	return len(data), nil
 }
 
@@ -85,7 +85,7 @@ func (w *UDPWriter) flush() {
 			}
 			msgs[pos] = msg
 			ipMsgs[pos] = ipv4.Message{
-				Buffers: [][]byte{msg.data},
+				Buffers: msg.data[:],
 				Addr:    w.addr,
 			}
 			pos++
